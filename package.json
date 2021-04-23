@@ -1,0 +1,11 @@
+{
+  "name": "ts-func",
+  "version": "0.0.0",
+  "description": "An engine to write Azure Function App function.json files as code.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Aaron Huggins",
+  "license": "MIT"
+}
