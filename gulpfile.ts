@@ -1,5 +1,6 @@
 import { writeFileSync } from 'fs'
-import { getFunctionSchema, compileFunctionSchema, AZ_FUNC_SCHEMA_NAME, AZ_FUNC_BINDINGS_NAME } from './src/AzureFunctionSchemaHelpers'
+import { getFunctionSchema, compileFunctionSchema } from './src/AzureFunctionSchemaHelpers'
+import { AZ_FUNC_SCHEMA_NAME, AZ_FUNC_BINDINGS_NAME } from './index'
 
 export async function generate () {
   const schema = await getFunctionSchema()
