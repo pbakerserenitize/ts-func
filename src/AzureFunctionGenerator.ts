@@ -9,6 +9,7 @@ export async function compile (): Promise<void> {
   const options = getOptions(tsFuncRc)
   const hooks: Promise<TsFuncRcHook>[] = []
 
+  /** Queue up resolving all functions and promises to hooks. */
   for (const [key, value] of Object.entries(tsFuncRc)) {
     if (key !== 'default') {
       switch (typeof value) {
@@ -37,6 +38,7 @@ export async function compile (): Promise<void> {
     }
   }
 
+  /** One-by-one, await each promise and handle the resolved hook. */
   for await (const hook of hooks) {
     const dir = `${hook.path}/${hook.name}`
 
@@ -54,11 +56,14 @@ export async function cleanup (): Promise<void> {
   const tsFuncRc = await getTsFuncRc()
   const options = getOptions(tsFuncRc)
 
-  for (const key of Object.keys(tsFuncRc)) {
-    const dir = `${options.rootDir ?? process.cwd()}/${getName(key, options.case)}`
-
-    if (existsSync(dir)) {
-      rmdirSync(dir, { recursive: true })
+  // If not persist, delete all files.
+  if (!(options.persist ?? false)) {
+    for (const key of Object.keys(tsFuncRc)) {
+      const dir = `${options.rootDir ?? process.cwd()}/${getName(key, options.case)}`
+  
+      if (existsSync(dir)) {
+        rmdirSync(dir, { recursive: true })
+      }
     }
   }
 }
@@ -97,3 +102,5 @@ async function getTsFuncRc (): Promise<TsFuncRc> {
 function getOptions (tsFuncRc: TsFuncRc): TsFuncOptions {
   return typeof tsFuncRc?.default === 'undefined' ? {} : tsFuncRc.default
 }
+
+cleanup()

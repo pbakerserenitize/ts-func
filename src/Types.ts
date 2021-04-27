@@ -18,6 +18,8 @@ export interface TsFuncOptions {
   case?: TsFuncCase
   /** The path to a directory in which function app ocnfigs will be emitted. */
   rootDir?: string
+  /** Persist all function configurations even if cleanup is called. Default is false. */
+  persist?: boolean
 }
 
 export interface TsFuncRcHook {
