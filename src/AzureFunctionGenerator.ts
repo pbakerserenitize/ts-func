@@ -102,5 +102,3 @@ async function getTsFuncRc (): Promise<TsFuncRc> {
 function getOptions (tsFuncRc: TsFuncRc): TsFuncOptions {
   return typeof tsFuncRc?.default === 'undefined' ? {} : tsFuncRc.default
 }
-
-cleanup()
