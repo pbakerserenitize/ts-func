@@ -11,30 +11,30 @@ export async function compile (): Promise<void> {
 
   /** Queue up resolving all functions and promises to hooks. */
   for (const [key, value] of Object.entries(tsFuncRc)) {
-    if (key !== 'default') {
-      switch (typeof value) {
-        case 'function':
-          hooks.push((
-            async (): Promise<TsFuncRcHook> => {
-              return {
-                name: getName(key, options.case),
-                path: options.rootDir ?? process.cwd(),
-                config: await value()
-              }
+    if (key === 'default') continue
+
+    switch (typeof value) {
+      case 'function':
+        hooks.push((
+          async (): Promise<TsFuncRcHook> => {
+            return {
+              name: getName(key, options.case),
+              path: options.rootDir ?? process.cwd(),
+              config: await value()
             }
-          )())
-          break
-        case 'object':
-          hooks.push((
-            async (): Promise<TsFuncRcHook> => {
-              return {
-                name: getName(key, options.case),
-                path: options.rootDir ?? process.cwd(),
-                config: value
-              }
+          }
+        )())
+        break
+      case 'object':
+        hooks.push((
+          async (): Promise<TsFuncRcHook> => {
+            return {
+              name: getName(key, options.case),
+              path: options.rootDir ?? process.cwd(),
+              config: value
             }
-          )())
-      }
+          }
+        )())
     }
   }
 
@@ -59,6 +59,8 @@ export async function cleanup (): Promise<void> {
   // If not persist, delete all files.
   if (!(options.persist ?? false)) {
     for (const key of Object.keys(tsFuncRc)) {
+      if (key === 'default') continue
+
       const dir = `${options.rootDir ?? process.cwd()}/${getName(key, options.case)}`
   
       if (existsSync(dir)) {
