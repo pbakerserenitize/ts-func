@@ -15,17 +15,12 @@ import {
 import type { JSONSchema4 } from 'json-schema'
 import { RequestIt } from 'request-it-client'
 import { utf16StringEscape } from 'quicktype-core/dist/support/Strings'
+import { AZ_FUNC_BINDINGS_NAME, AZ_FUNC_SCHEMA_FILE, AZ_FUNC_SCHEMA_NAME, AZ_FUNC_SCHEMA_URL, TS_FUNC_STORE } from './Constants'
 
 interface SchemaInput {
   name: string
   schema: Record<string, any>
 }
-
-export const AZ_FUNC_BINDINGS_NAME = 'AzureFunctionBindings'
-export const AZ_FUNC_SCHEMA_FILE = 'function.schema.json'
-export const AZ_FUNC_SCHEMA_NAME = 'AzureFunctionSchema'
-export const AZ_FUNC_SCHEMA_URL = 'http://json.schemastore.org/function'
-export const TS_FUNC_STORE = '.ts-func'
 
 class ExtendedTypeScriptTargetLanguage extends TypeScriptTargetLanguage {
   protected makeRenderer(renderContext: RenderContext, untypedOptionValues: { [name: string]: any }): ExtendedTypeScriptRenderer {

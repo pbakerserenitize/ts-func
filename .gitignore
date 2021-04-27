@@ -117,3 +117,4 @@ dist
 
 # Ignore project files
 .ts-func
+**/function.json

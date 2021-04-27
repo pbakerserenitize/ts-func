@@ -1,0 +1,6 @@
+export const AZ_FUNC_BINDINGS_NAME = 'AzureFunctionBindings'
+export const AZ_FUNC_SCHEMA_FILE = 'function.schema.json'
+export const AZ_FUNC_SCHEMA_NAME = 'AzureFunctionSchema'
+export const AZ_FUNC_SCHEMA_URL = 'http://json.schemastore.org/function'
+export const TS_FUNC_CONFIG = '.tsfuncrc'
+export const TS_FUNC_STORE = '.ts-func'
