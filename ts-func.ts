@@ -22,10 +22,10 @@ async function main (): Promise<void> {
     metavar: '',
     dest: 'command'
   })
-  command.add_parser('cleanup', {
+  const cleanupParser = command.add_parser('cleanup', {
     help: 'Clean up the current working directory of all emitted function.json.'
   })
-  command.add_parser('compile', {
+  const compileParser = command.add_parser('compile', {
     help: 'Compile .tsfuncrc.(ts|js) in the current working directory and emit function.json.'
   })
   const pkg = getPackage()

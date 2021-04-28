@@ -4,9 +4,9 @@ import { TS_FUNC_CONFIG } from './Constants'
 import { TsFuncCase, TsFuncOptions, TsFuncRc, TsFuncRcHook } from './Types'
 
 /** Compile .tsfuncrc in the current working directory. */
-export async function compile (): Promise<void> {
+export async function compile (overrideOptions?: TsFuncOptions): Promise<void> {
   const tsFuncRc = await getTsFuncRc()
-  const options = getOptions(tsFuncRc)
+  const options = getOptions(tsFuncRc, overrideOptions)
   const hooks: Promise<TsFuncRcHook>[] = []
 
   /** Queue up resolving all functions and promises to hooks. */
@@ -52,9 +52,9 @@ export async function compile (): Promise<void> {
 }
 
 /** Cleanup the emitted files and directories from .tsfuncrc in the current working directory. */
-export async function cleanup (): Promise<void> {
+export async function cleanup (overrideOptions?: TsFuncOptions): Promise<void> {
   const tsFuncRc = await getTsFuncRc()
-  const options = getOptions(tsFuncRc)
+  const options = getOptions(tsFuncRc, overrideOptions)
 
   // If not persist, delete all files.
   if (!(options.persist ?? false)) {
@@ -101,6 +101,12 @@ async function getTsFuncRc (): Promise<TsFuncRc> {
   return await import(`${process.cwd()}/${TS_FUNC_CONFIG}`)
 }
 
-function getOptions (tsFuncRc: TsFuncRc): TsFuncOptions {
-  return typeof tsFuncRc?.default === 'undefined' ? {} : tsFuncRc.default
+function getOptions (tsFuncRc: TsFuncRc, overrideOptions?: TsFuncOptions): TsFuncOptions {
+  const providedOptions: TsFuncOptions = typeof tsFuncRc?.default === 'undefined' ? {} : tsFuncRc.default
+  overrideOptions = overrideOptions ?? {}
+
+  return {
+    ...providedOptions,
+    ...overrideOptions
+  }
 }
