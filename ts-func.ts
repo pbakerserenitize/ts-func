@@ -31,6 +31,14 @@ async function main (): Promise<void> {
   const pkg = getPackage()
   const version = getVerison(pkg)
 
+  compileParser.add_argument('--noEmit', {
+    nargs: '?',
+    const: true,
+    type: (value: string) => value === 'true',
+    required: false,
+    default: false
+  })
+
   parser.add_argument('-v', '--version', { action: 'version', version })
 
   const options = parser.parse_args()
@@ -40,7 +48,9 @@ async function main (): Promise<void> {
       await cleanup()
       break
     case 'compile':
-      await compile()
+      await compile({
+        noEmit: options?.noEmit
+      })
       break
     default:
       parser.parse_args(['--help'])

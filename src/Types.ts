@@ -20,6 +20,8 @@ export interface TsFuncOptions {
   rootDir?: string
   /** Persist all function configurations even if cleanup is called. Default is false. */
   persist?: boolean
+  /** Do not write changes to disk; typically provided at run-time via cli. Default is false. */
+  noEmit?: boolean
 }
 
 export interface TsFuncRcHook {

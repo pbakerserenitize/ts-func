@@ -1,6 +1,7 @@
 import { existsSync, mkdirSync, rmdirSync, writeFileSync } from 'fs'
 import { register } from 'ts-node'
 import { TS_FUNC_CONFIG } from './Constants'
+import { scriptFile } from './ScriptFile'
 import { TsFuncCase, TsFuncOptions, TsFuncRc, TsFuncRcHook } from './Types'
 
 /** Compile .tsfuncrc in the current working directory. */
@@ -17,10 +18,16 @@ export async function compile (overrideOptions?: TsFuncOptions): Promise<void> {
       case 'function':
         hooks.push((
           async (): Promise<TsFuncRcHook> => {
+            const config = await value()
+
+            if (typeof config.scriptFile === 'string') {
+              config.scriptFile = await scriptFile(config.scriptFile)
+            }
+
             return {
               name: getName(key, options.case),
               path: options.rootDir ?? process.cwd(),
-              config: await value()
+              config
             }
           }
         )())
@@ -28,6 +35,10 @@ export async function compile (overrideOptions?: TsFuncOptions): Promise<void> {
       case 'object':
         hooks.push((
           async (): Promise<TsFuncRcHook> => {
+            if (typeof value.scriptFile === 'string') {
+              value.scriptFile = await scriptFile(value.scriptFile)
+            }
+
             return {
               name: getName(key, options.case),
               path: options.rootDir ?? process.cwd(),
@@ -42,12 +53,14 @@ export async function compile (overrideOptions?: TsFuncOptions): Promise<void> {
   for await (const hook of hooks) {
     const dir = `${hook.path}/${hook.name}`
 
-    if (existsSync(dir)) {
-      rmdirSync(dir, { recursive: true })
-    }
+    if (!options.noEmit) {
+      if (existsSync(dir)) {
+        rmdirSync(dir, { recursive: true })
+      }
 
-    mkdirSync(dir, { recursive: true })
-    writeFileSync(`${dir}/function.json`, JSON.stringify(hook.config, null, 2))
+      mkdirSync(dir, { recursive: true })
+      writeFileSync(`${dir}/function.json`, JSON.stringify(hook.config, null, 2))
+    }
   }
 }
 
