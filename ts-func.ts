@@ -19,7 +19,7 @@ async function main (): Promise<void> {
   })
   const command = parser.add_subparsers({
     title: 'Commands',
-    metavar: '',
+    metavar: '[cleanup | compile]',
     dest: 'command'
   })
   const cleanupParser = command.add_parser('cleanup', {

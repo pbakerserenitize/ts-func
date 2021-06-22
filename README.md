@@ -2,6 +2,36 @@
 
 Generate Azure Function App Configs from TypeScript and JavaScript!
 
+## Usage
+
+Add a `.tsfuncrc.ts` file, and then use `ts-func` to compile and clean up generated `function.json` for your app.
+
+```shell
+> ts-func --help
+usage: ts-func [-h] [-v] [cleanup | compile] ...
+
+TS Func: Azure function.json generator
+
+optional arguments:
+  -h, --help           show this help message and exit
+  -v, --version        show program's version number and exit
+
+Commands:
+  [cleanup | compile]
+    cleanup            Clean up the current working directory of all emitted function.json.
+    compile            Compile .tsfuncrc.(ts|js) in the current working directory and emit function.json.
+```
+
+```shell
+~> ts-func compile --help
+usage: ts-func compile [-h] [--noEmit] [--ignoreScripts]
+
+optional arguments:
+  -h, --help           show this help message and exit
+  --noEmit, -n         Do not make any changes to the target directory.
+  --ignoreScripts, -i  Ignore `scriptFile` properties; passes them unmodified to the output json.
+```
+
 ## How it works
 
 Define a JavaScript or TypeScript file at the root of your project named `.tsfuncrc`; can be either `.js` or `.ts`.

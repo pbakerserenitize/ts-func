@@ -1,6 +1,6 @@
 {
   "name": "ts-func",
-  "version": "0.2.0-beta2",
+  "version": "0.2.0-beta3",
   "description": "An engine to write Azure Function App function.json files as code.",
   "main": "index.js",
   "types": "index.d.ts",
