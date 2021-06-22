@@ -65,6 +65,10 @@ async function typeScriptFile (path: string, altTSConfig?: string): Promise<stri
 }
 
 async function javaScriptFile (path: string): Promise<string> {
+  if (path.startsWith('../') && existsSync(path.substring(3))) {
+    return path
+  }
+
   // Resolve import paths and package.json path.
   const configName = 'package.json'
   const importPath = path.toLowerCase().endsWith('.js') ? path : path + '.js'
