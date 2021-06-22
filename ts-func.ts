@@ -31,30 +31,41 @@ async function main (): Promise<void> {
   const pkg = getPackage()
   const version = getVerison(pkg)
 
-  compileParser.add_argument('--noEmit', {
-    nargs: '?',
+  compileParser.add_argument('--noEmit', '-n', {
+    action: 'store_const',
     const: true,
-    type: (value: string) => value === 'true',
     required: false,
-    default: false
+    default: false,
+    help: 'Do not make any changes to the target directory.'
+  })
+
+  compileParser.add_argument('--ignoreScripts', '-i', {
+    action: 'store_const',
+    const: true,
+    required: false,
+    default: false,
+    help: 'Ignore `scriptFile` properties; passes them unmodified to the output json.'
   })
 
   parser.add_argument('-v', '--version', { action: 'version', version })
 
   const options = parser.parse_args()
 
-  switch(options?.command) {
-    case 'cleanup':
-      await cleanup()
-      break
-    case 'compile':
-      await compile({
-        noEmit: options?.noEmit
-      })
-      break
-    default:
-      parser.parse_args(['--help'])
-      break
+  if (!('help' in options)) {
+    switch(options?.command) {
+      case 'cleanup':
+        await cleanup()
+        break
+      case 'compile':
+        await compile({
+          noEmit: options?.noEmit,
+          ignoreScripts: options?.ignoreScripts
+        })
+        break
+      default:
+        parser.parse_args(['--help'])
+        break
+    }
   }
 }
 

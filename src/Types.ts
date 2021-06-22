@@ -22,6 +22,8 @@ export interface TsFuncOptions {
   persist?: boolean
   /** Do not write changes to disk; typically provided at run-time via cli. Default is false. */
   noEmit?: boolean
+  /** Ignore script file path validation; passes `scriptFile` properties unmodified and unvalidated. */
+  ignoreScripts?: boolean
 }
 
 export interface TsFuncRcHook {

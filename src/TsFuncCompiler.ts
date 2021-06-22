@@ -20,7 +20,7 @@ export async function compile (overrideOptions?: TsFuncOptions): Promise<void> {
           async (): Promise<TsFuncRcHook> => {
             const config = await value()
 
-            if (typeof config.scriptFile === 'string') {
+            if (!options.ignoreScripts && typeof config.scriptFile === 'string') {
               config.scriptFile = await scriptFile(config.scriptFile)
             }
 
@@ -35,7 +35,7 @@ export async function compile (overrideOptions?: TsFuncOptions): Promise<void> {
       case 'object':
         hooks.push((
           async (): Promise<TsFuncRcHook> => {
-            if (typeof value.scriptFile === 'string') {
+            if (!options.ignoreScripts && typeof value.scriptFile === 'string') {
               value.scriptFile = await scriptFile(value.scriptFile)
             }
 
