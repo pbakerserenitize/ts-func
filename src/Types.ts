@@ -27,7 +27,6 @@ export interface TsFuncOptions {
 }
 
 export interface TsFuncRcHook {
-  name: string
-  path: string
+  dir: string
   config: AzureFunctionSchema
 }

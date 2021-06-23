@@ -19,31 +19,36 @@ export async function compile (overrideOptions?: TsFuncOptions): Promise<void> {
         hooks.push((
           async (): Promise<TsFuncRcHook> => {
             const config = await value()
-
-            if (!options.ignoreScripts && typeof config.scriptFile === 'string') {
-              config.scriptFile = await scriptFile(config.scriptFile)
-            }
-
-            return {
-              name: getName(key, options.case),
-              path: options.rootDir ?? process.cwd(),
+            const name = getName(key, options.case)
+            const path = options.rootDir ?? process.cwd()
+            const hook = {
+              dir: `${path}/${name}`,
               config
             }
+
+            if (!options.ignoreScripts && typeof config.scriptFile === 'string') {
+              config.scriptFile = await scriptFile(config.scriptFile, hook.dir)
+            }
+
+            return hook
           }
         )())
         break
       case 'object':
         hooks.push((
           async (): Promise<TsFuncRcHook> => {
-            if (!options.ignoreScripts && typeof value.scriptFile === 'string') {
-              value.scriptFile = await scriptFile(value.scriptFile)
-            }
-
-            return {
-              name: getName(key, options.case),
-              path: options.rootDir ?? process.cwd(),
+            const name = getName(key, options.case)
+            const path = options.rootDir ?? process.cwd()
+            const hook = {
+              dir: `${path}/${name}`,
               config: value
             }
+
+            if (!options.ignoreScripts && typeof value.scriptFile === 'string') {
+              value.scriptFile = await scriptFile(value.scriptFile, hook.dir)
+            }
+
+            return hook
           }
         )())
     }
@@ -51,15 +56,13 @@ export async function compile (overrideOptions?: TsFuncOptions): Promise<void> {
 
   /** One-by-one, await each promise and handle the resolved hook. */
   for await (const hook of hooks) {
-    const dir = `${hook.path}/${hook.name}`
-
     if (!options.noEmit) {
-      if (existsSync(dir)) {
-        rmdirSync(dir, { recursive: true })
+      if (existsSync(hook.dir)) {
+        rmdirSync(hook.dir, { recursive: true })
       }
 
-      mkdirSync(dir, { recursive: true })
-      writeFileSync(`${dir}/function.json`, JSON.stringify(hook.config, null, 2))
+      mkdirSync(hook.dir, { recursive: true })
+      writeFileSync(`${hook.dir}/function.json`, JSON.stringify(hook.config, null, 2))
     }
   }
 }

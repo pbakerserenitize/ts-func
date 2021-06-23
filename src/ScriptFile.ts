@@ -42,10 +42,17 @@ async function getBaseFiles (importPath: string, configName: string): Promise<[s
   return [undefined, undefined]
 }
 
-async function typeScriptFile (path: string, altTSConfig?: string): Promise<string> {
+async function typeScriptFile (path: string, functionPath: string): Promise<string> {
   // Resolve import paths and tsconfig path.
-  const configName = altTSConfig ?? 'tsconfig.json'
+  const configName = 'tsconfig.json'
   const importPath = path.toLowerCase().endsWith('.ts') ? path : path + '.ts'
+
+  if (path.startsWith('../') || path.startsWith('./')) {
+    const absolutePath = relative(functionPath, path)
+
+    if (existsSync(absolutePath)) return normalizeScript(path)
+  }
+
   const [tsconfig, importFile] = await getBaseFiles(importPath, configName)
 
   // if the paths were found, then calculate final output.
@@ -64,9 +71,11 @@ async function typeScriptFile (path: string, altTSConfig?: string): Promise<stri
   }
 }
 
-async function javaScriptFile (path: string): Promise<string> {
-  if (path.startsWith('../') && existsSync(path.substring(3))) {
-    return path
+async function javaScriptFile (path: string, functionPath: string): Promise<string> {
+  if (path.startsWith('../') || path.startsWith('./')) {
+    const absolutePath = relative(functionPath, path)
+
+    if (existsSync(absolutePath)) return normalizeScript(path)
   }
 
   // Resolve import paths and package.json path.
@@ -85,15 +94,15 @@ async function javaScriptFile (path: string): Promise<string> {
  * represents either the compiled TypeScript path for an import, or the normalized JavaScript path.
  * Returns `undefined` if the intermediate import or resulting path does not exist.
  */
-export async function scriptFile (importPath: string, altTsconfig?: string): Promise<string> {
+export async function scriptFile (importPath: string, functionPath: string): Promise<string> {
   if (typeof importPath === 'undefined') return
 
   let scriptPath: string
 
   if (importPath.toLowerCase().endsWith('.js')) {
-    scriptPath = await javaScriptFile(importPath)
+    scriptPath = await javaScriptFile(importPath, functionPath)
   } else {
-    scriptPath = await typeScriptFile(importPath, altTsconfig)
+    scriptPath = await typeScriptFile(importPath, functionPath)
   }
 
   if (typeof scriptPath === 'string') {
