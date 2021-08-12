@@ -31,7 +31,7 @@ export interface AzureFunctionSchema {
   /**
    * Optional path to function script file.
    */
-  scriptFile?: string;
+  scriptFile: string;
 }
 
 /**
